@@ -1,166 +1,134 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FLAMES 🔥</title>
+  <title>FLAMES Game</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: linear-gradient(to right, #ff758c, #ff7eb3);
+      color: white;
+      padding-top: 50px;
+    }
 
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #ff6a88, #ff99ac);
-    font-family: 'Segoe UI', sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+    input {
+      padding: 10px;
+      margin: 10px;
+      width: 200px;
+      border-radius: 5px;
+      border: none;
+    }
 
-.card {
-    background: white;
-    padding: 30px 20px;
-    border-radius: 22px;
-    width: 92%;
-    max-width: 380px;
-    text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-}
+    button {
+      padding: 10px 20px;
+      background-color: white;
+      color: #ff4081;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
 
-h1 {
-    color: #ff2f68;
-    margin-bottom: 10px;
-}
+    button:hover {
+      background-color: #ffe4ec;
+    }
 
-.subtitle {
-    color: #555;
-    margin-bottom: 20px;
-    font-size: 15px;
-}
-
-input {
-    width: 90%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 20px;
-    border: 1px solid #ddd;
-    font-size: 16px;
-    text-align: center;
-}
-
-button {
-    margin-top: 15px;
-    padding: 12px 30px;
-    border-radius: 30px;
-    border: none;
-    background: #ff2f68;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-#result {
-    margin-top: 20px;
-    display: none;
-}
-
-#result h2 {
-    font-size: 26px;
-    color: #2ecc71;
-}
-
-#meaning {
-    margin-top: 8px;
-    color: #555;
-    font-size: 16px;
-}
-</style>
+    #result {
+      font-size: 28px;
+      margin-top: 30px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="card">
-    <h1>FLAMES 🔥</h1>
-    <div class="subtitle">
-        Enter two names and see destiny 😌❤️
-    </div>
+  <h1>🔥 FLAMES Game 🔥</h1>
 
-    <input type="text" id="name1" placeholder="Your Name">
-    <input type="text" id="name2" placeholder="Partner's Name">
+  <input type="text" id="name1" placeholder="Your Name">
+  <br>
+  <input type="text" id="name2" placeholder="Partner Name">
+  <br>
+  <button onclick="calculateFlames()">Check Relationship</button>
 
-    <button onclick="calculateFlames()">Show Result 🔥</button>
+  <div id="result"></div>
 
-    <div id="result">
-        <h2 id="flameLetter"></h2>
-        <div id="meaning"></div>
-    </div>
-</div>
+  <!-- Hidden Background Audio Player -->
+  <audio id="bgMusic" loop></audio>
 
 <script>
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx1tOYqMKXapB4dMKd6NpHtnTPOZbLUBjn_YNza5Np2wpNSIAiMzEcX4mbj0NMh27admA/exec";
 
 function calculateFlames() {
-    const rawName1 = document.getElementById("name1").value.trim();
-    const rawName2 = document.getElementById("name2").value.trim();
 
-    if (!rawName1 || !rawName2) {
-        alert("Please enter both names ❤️");
-        return;
+  let name1 = document.getElementById("name1").value.toLowerCase().replace(/\s/g,'');
+  let name2 = document.getElementById("name2").value.toLowerCase().replace(/\s/g,'');
+
+  if(name1 === "" || name2 === ""){
+    alert("Please enter both names!");
+    return;
+  }
+
+  let arr1 = name1.split('');
+  let arr2 = name2.split('');
+
+  for(let i=0; i<arr1.length; i++){
+    let index = arr2.indexOf(arr1[i]);
+    if(index !== -1){
+      arr1[i] = '';
+      arr2[index] = '';
     }
+  }
 
-    let name1 = rawName1.toLowerCase().replace(/\s/g, '');
-    let name2 = rawName2.toLowerCase().replace(/\s/g, '');
+  let count = arr1.join('').length + arr2.join('').length;
 
-    let arr1 = name1.split("");
-    let arr2 = name2.split("");
+  let flames = ['F','L','A','M','E','S'];
+  let index = 0;
 
-    // Remove common letters
-    for (let i = 0; i < arr1.length; i++) {
-        for (let j = 0; j < arr2.length; j++) {
-            if (arr1[i] === arr2[j]) {
-                arr1[i] = "";
-                arr2[j] = "";
-                break;
-            }
-        }
-    }
+  while(flames.length > 1){
+    index = (index + count - 1) % flames.length;
+    flames.splice(index,1);
+  }
 
-    let count = arr1.join("").length + arr2.join("").length;
+  let resultLetter = flames[0];
+  let resultText = "";
+  let songFile = "";
 
-    let flames = ["F", "L", "A", "M", "E", "S"];
-    let index = 0;
+  switch(resultLetter){
+    case 'F':
+      resultText = "👫 FRIENDS";
+      songFile = "friend.mp3";
+      break;
+    case 'L':
+      resultText = "❤️ LOVE";
+      songFile = "love.mp3";
+      break;
+    case 'A':
+      resultText = "😍 AFFECTION";
+      songFile = "affection.mp3";
+      break;
+    case 'M':
+      resultText = "💍 MARRIAGE";
+      songFile = "marriage.mp3";
+      break;
+    case 'E':
+      resultText = "😡 ENEMY";
+      songFile = "enemy.mp3";
+      break;
+    case 'S':
+      resultText = "👧 SISTER";
+      songFile = "sister.mp3";
+      break;
+  }
 
-    while (flames.length > 1) {
-        index = (index + count - 1) % flames.length;
-        flames.splice(index, 1);
-    }
+  document.getElementById("result").innerHTML = resultText;
 
-    const meanings = {
-        F: "Friends 🤝",
-        L: "Love ❤️",
-        A: "Affection 🥰",
-        M: "Marriage 💍",
-        E: "Enemies 😅",
-        S: "Siblings 👨‍👩‍👧"
-    };
-
-    const finalLetter = flames[0];
-    const finalResult = meanings[finalLetter];
-
-    document.getElementById("result").style.display = "block";
-    document.getElementById("flameLetter").innerText = finalLetter;
-    document.getElementById("meaning").innerText = finalResult;
-
-    // 🔥 SILENTLY SEND DATA TO YOUR GOOGLE SHEET 🔥
-    fetch(WEBHOOK_URL, {
-        method: "POST",
-        body: JSON.stringify({
-            name1: rawName1,
-            name2: rawName2,
-            result: finalResult
-        })
-    });
+  let audio = document.getElementById("bgMusic");
+  audio.src = songFile;
+  audio.play();
 }
+
 </script>
 
 </body>
 </html>
+
